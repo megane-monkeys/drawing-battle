@@ -1,32 +1,33 @@
 import { createSlice } from "@reduxjs/toolkit";
-
-const STOP = 'STOP';
-const INITIAL = 'INITIAL';
-const WORKING = 'WORKING';
+import { TimerStatus } from "../../constants/timerStatus"
 
 const initialState = {
-    state: STOP,
-    startTime: new Date(),
-    time: 0
+    state: TimerStatus.STOP,
+    startTime: new Date().getTime(),
+    milliseconds: 0
 };
 
-export default createSlice({
+const slice = createSlice({
     name: "timer",
     initialState,
     reducers: {
         startTimer: (state, action) => {
-            state.startTime = new Date();
-            state.state = WORKING;
+            state.startTime = new Date().getTime();
+            state.state = TimerStatus.WORKING;
         },
         resetTimer: (state, action) => {
-            state.state = INITIAL;
-            state.time = 0;
+            state.state = TimerStatus.STOP;
+            state.milliseconds = 0;
         },
         stopTimer: (state, action) => {
-            state.state = STOP;
+            state.state = TimerStatus.STOP;
         },
         updateTimer: (state, action) => {
-            state.time = + new Date() - + state.startTime;
+            state.milliseconds = new Date().getTime() - state.startTime;
         }
     }
 });
+export const actions = {
+    ...slice.actions
+};
+export default slice.reducer;

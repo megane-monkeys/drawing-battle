@@ -1,12 +1,12 @@
 import { combineReducers } from "redux";
-import timerModule from "./timer/slice";
+import timerReducer from "./timer/slice";
 
 export interface RootState {
-    timer: ReturnType<typeof timerModule.reducer>;
+    timer: ReturnType<typeof timerReducer>;
 }
 
 const rootReducer = combineReducers({
-    timer: timerModule.reducer
+    timer: timerReducer
 });
 
 export default rootReducer;
