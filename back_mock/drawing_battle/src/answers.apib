@@ -1,0 +1,11 @@
+# Group お題選択
+ランダムシード値から回答ラベルを抽出します。
+
+## お題
+### お題取得 [GET /d-battle/api/v1/answers{?seed}]
++ Parameter
+    + seed: 1(number,optional) - 正解ラベルを選択するときの乱数シード
++ Response 200 (application/json)
+    + Attribute
+        + label: うさぎ(string, required)
+
