@@ -5,25 +5,23 @@ export type ButtonProps = {
     children?: React.ReactChild;
     onClick?: () => void;
     style?: CSSObject;
+    color?: "primary" | "secondary";
 };
 
 
 
 const StyledBaseButton = styled.button<ButtonProps>`
-  position: absolute;
-  z-index: 1;
-  top: 35vh;
   left: 25%;
   cursor: pointer;
   border-width: 0;
-  padding: 10px;
+  padding: 5px;
+  margin: 5px;
   font-family: "NotoSansCJKjp", monospace;
-  font-size: 36px;
+  font-size: 20px;
   border-radius: 5px;
   width: 50%;
-  margin: 10px;
   color: white;
-  background: deeppink;
+  background: ${props => (props.color === "secondary" ? "yellowgreen" : "deeppink")};
   transition: background 0.5s;
   ${props => props.style};
 `;

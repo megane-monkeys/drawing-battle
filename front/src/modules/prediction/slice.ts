@@ -3,7 +3,7 @@ import { PredictionStatus } from "../../constants/predictionStatus"
 
 const initialState = {
     answer: "",
-    result: "-",
+    prediction: "-",
     status: PredictionStatus.INITIAL
 };
 
@@ -13,13 +13,15 @@ const slice = createSlice({
     reducers: {
         initialize: (state, action) => {
             state.status = PredictionStatus.INITIAL;
+            state.answer = "";
+            state.prediction = "-";
         },
         setAnswer: (state, action) => {
             state.answer = action.payload;
             state.status = PredictionStatus.PREDICTION;
         },
-        setResult: (state, action) => {
-            state.result = action.payload;
+        setPrediction: (state, action: { payload: any; type: string } & {}) => {
+            state.prediction = action.payload;
             state.status = PredictionStatus.PREDICTION;
         },
         fetchAnswer: (state, action) => {

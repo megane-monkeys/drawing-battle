@@ -4,21 +4,17 @@ import { Grid } from "@material-ui/core";
 import baseStyled from "styled-components";
 import * as d3 from "d3";
 import {TimerStatus} from "../../constants/timerStatus";
-import Button from "../../components/Button/Button";
 import {bindActionCreators} from "redux";
 import {timerSelectors, timerActions} from "../../modules/timer";
-import {predictionActions} from "../../modules/prediction";
+import {predictionSelectors, predictionActions} from "../../modules/prediction";
 
 const Canvas: React.FC = () => {
-    const state = useSelector(timerSelectors);
-    const { fetchAnswer, startTimer, setAnswer, resetTimer } = useBoundActions();
+    const timerState = useSelector(timerSelectors);
+    const predictionState = useSelector(predictionSelectors);
+    const { initialize, fetchAnswer, startTimer, fetchPrediction, stopTimer } = useBoundActions();
     let data: number[][] = [];
-    let sendingData = [];
+    let sendingData: number[][][] = [];
 
-    const start = () => {
-        startTimer(null);
-        fetchAnswer(null);
-    };
     useEffect(() => {
         const color = '#000';
         const strokeWidth = '5px' ;
@@ -53,7 +49,7 @@ const Canvas: React.FC = () => {
 
         const dragended = () => {
             sendingData.push(data);
-            // TODO: ここでAPIへのPOSTをdispatch
+            fetchPrediction(sendingData);
             activeLine = null;
             data = [];
         };
@@ -77,19 +73,18 @@ const Canvas: React.FC = () => {
             data = [];
         };
 
-        d3.select('#clear').on('click', clear);
-
-        if (state.state === TimerStatus.RESETTING) {
+        if (predictionState.answer === predictionState.prediction) {
+            stopTimer(null);
+        }
+        if (timerState.state === TimerStatus.RESETTING) {
+            initialize(null);
             clear();
+            fetchAnswer(null);
             startTimer(null);
         }
     }, [data]);
     return (
         <Container>
-            {(state.state === TimerStatus.INITIAL) && <Button onClick={start}>スタート</Button>}
-            {(state.state === TimerStatus.FINISH) && <Button onClick={() => resetTimer(null)}>もう一回</Button>}
-            {(state.state === TimerStatus.FINISH) && <ResultText>記録: {(state.milliseconds/1000).toFixed(2)}秒</ResultText>}
-            <button id="clear">clear</button>
             <svg id="canvas"/>
         </Container>
     );
@@ -103,12 +98,11 @@ const useBoundActions = () => {
     return useMemo(() => {
         return bindActionCreators(
             {
-                updateTimer: timerActions.updateTimer,
-                resetTimer: timerActions.resetTimer,
                 startTimer: timerActions.startTimer,
                 stopTimer: timerActions.stopTimer,
-                setAnswer: predictionActions.setAnswer,
                 fetchAnswer: predictionActions.fetchAnswer,
+                fetchPrediction: predictionActions.fetchPrediction,
+                initialize: predictionActions.initialize,
             },
             dispatch
         );
@@ -117,22 +111,9 @@ const useBoundActions = () => {
 
 const Container = baseStyled(Grid)`
   flex: 1;
-  height: 80vh;
+  height: 70vh;
   width: 90%;
   margin: auto;
   position: relative;
 `;
 
-const ResultText = baseStyled(Grid)`
-  position: absolute;
-  top: 30%;
-  left: 20%;
-  right: 20%;
-  margin: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: dimgray;
-  background: white;
-  font-size: 32px;
-`;
