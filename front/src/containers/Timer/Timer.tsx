@@ -9,7 +9,7 @@ import {TimerStatus} from "../../constants/timerStatus";
 
 const Timer: React.FC = () => {
     const state = useSelector(timerSelector);
-    const { updateTimer, startTimer, stopTimer } = useBoundActions();
+    const { updateTimer, stopTimer } = useBoundActions();
     useEffect(() => {
         if (state.state === TimerStatus.WORKING){
             setTimeout(() => {
@@ -19,9 +19,8 @@ const Timer: React.FC = () => {
     });
     return (
         <Container>
-            <button id="start" onClick={() => startTimer(null)}>start</button>
             <span>{(state.milliseconds/1000).toFixed(2)}</span>
-            <button id="stop" onClick={() => stopTimer(null)}>stop</button>
+            <button onClick={() => stopTimer(null)}>stop</button>
         </Container>
     );
 };
@@ -34,14 +33,12 @@ const useBoundActions = () => {
         return bindActionCreators(
             {
                 updateTimer: timerActions.updateTimer,
-                startTimer: timerActions.startTimer,
                 stopTimer: timerActions.stopTimer
             },
             dispatch
         );
     }, [dispatch]);
 };
-
 
 
 const Container = baseStyled(Grid)`

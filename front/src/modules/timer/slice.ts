@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { TimerStatus } from "../../constants/timerStatus"
 
 const initialState = {
-    state: TimerStatus.STOP,
+    state: TimerStatus.INITIAL,
     startTime: new Date().getTime(),
     milliseconds: 0
 };
@@ -16,11 +16,11 @@ const slice = createSlice({
             state.state = TimerStatus.WORKING;
         },
         resetTimer: (state, action) => {
-            state.state = TimerStatus.STOP;
+            state.state = TimerStatus.RESETTING;
             state.milliseconds = 0;
         },
         stopTimer: (state, action) => {
-            state.state = TimerStatus.STOP;
+            state.state = TimerStatus.FINISH;
         },
         updateTimer: (state, action) => {
             state.milliseconds = new Date().getTime() - state.startTime;

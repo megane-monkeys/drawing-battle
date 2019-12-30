@@ -1,4 +1,6 @@
 export enum TimerStatus {
-    STOP = 'STOP',
+    FINISH = 'FINISH',
+    INITIAL = 'INITIAL',
+    RESETTING = 'RESETTING',
     WORKING = 'WORKING'
 }
