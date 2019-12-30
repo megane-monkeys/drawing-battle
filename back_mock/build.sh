@@ -1,0 +1,1 @@
+docker-compose run aglio aglio  --theme-variables default --theme-template triple -i ./drawing_battle/index.apib -o ./output/drawing_battle.html
