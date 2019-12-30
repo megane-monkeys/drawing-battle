@@ -12,7 +12,7 @@ export type ButtonProps = {
 const StyledBaseButton = styled.button<ButtonProps>`
   position: absolute;
   z-index: 1;
-  top: 30vh;
+  top: 35vh;
   left: 25%;
   cursor: pointer;
   border-width: 0;

@@ -1,13 +1,13 @@
 import React from 'react';
 import Timer from "../Timer/Timer"
-import predictionSelector from "../../modules/prediction/selector"
+import { predictionSelectors } from "../../modules/prediction"
 import { useSelector } from "react-redux";
 
 const Header: React.FC = () => {
-    const state = useSelector(predictionSelector);
+    const state = useSelector(predictionSelectors);
     return (
         <div className="Header">
-            <h2>お題 「ユニコーン」</h2>
+            <h2>お題 「{state.answer}」</h2>
             <Timer />
             <p>AIによる判定... {state.result}?</p>
         </div>

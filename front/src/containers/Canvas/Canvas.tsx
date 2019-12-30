@@ -3,19 +3,22 @@ import { useDispatch, useSelector } from "react-redux";
 import { Grid } from "@material-ui/core";
 import baseStyled from "styled-components";
 import * as d3 from "d3";
-import timerSelector from "../../modules/timer/selector"
 import {TimerStatus} from "../../constants/timerStatus";
 import Button from "../../components/Button/Button";
 import {bindActionCreators} from "redux";
-import {actions as timerActions} from "../../modules/timer/slice";
+import {timerSelectors, timerActions} from "../../modules/timer";
+import {predictionActions} from "../../modules/prediction";
 
 const Canvas: React.FC = () => {
-    const state = useSelector(timerSelector);
-    const { updateTimer, startTimer, stopTimer, resetTimer } = useBoundActions();
+    const state = useSelector(timerSelectors);
+    const { fetchAnswer, startTimer, setAnswer, resetTimer } = useBoundActions();
     let data: number[][] = [];
     let sendingData = [];
 
-
+    const start = () => {
+        startTimer(null);
+        fetchAnswer(null);
+    };
     useEffect(() => {
         const color = '#000';
         const strokeWidth = '5px' ;
@@ -83,9 +86,9 @@ const Canvas: React.FC = () => {
     }, [data]);
     return (
         <Container>
-            {(state.state === TimerStatus.INITIAL) && <Button onClick={() => startTimer(null)}>start</Button>}
-            {(state.state === TimerStatus.FINISH) && <Button onClick={() => resetTimer(null)}>restart</Button>}
-            {(state.state === TimerStatus.FINISH) && <ResultText>{(state.milliseconds/1000).toFixed(2)}秒</ResultText>}
+            {(state.state === TimerStatus.INITIAL) && <Button onClick={start}>スタート</Button>}
+            {(state.state === TimerStatus.FINISH) && <Button onClick={() => resetTimer(null)}>もう一回</Button>}
+            {(state.state === TimerStatus.FINISH) && <ResultText>記録: {(state.milliseconds/1000).toFixed(2)}秒</ResultText>}
             <button id="clear">clear</button>
             <svg id="canvas"/>
         </Container>
@@ -103,7 +106,9 @@ const useBoundActions = () => {
                 updateTimer: timerActions.updateTimer,
                 resetTimer: timerActions.resetTimer,
                 startTimer: timerActions.startTimer,
-                stopTimer: timerActions.stopTimer
+                stopTimer: timerActions.stopTimer,
+                setAnswer: predictionActions.setAnswer,
+                fetchAnswer: predictionActions.fetchAnswer,
             },
             dispatch
         );
@@ -121,12 +126,13 @@ const Container = baseStyled(Grid)`
 const ResultText = baseStyled(Grid)`
   position: absolute;
   top: 30%;
-  left: 0;
-  right: 0;
+  left: 20%;
+  right: 20%;
   margin: auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: grey;
+  color: dimgray;
+  background: white;
   font-size: 32px;
 `;
