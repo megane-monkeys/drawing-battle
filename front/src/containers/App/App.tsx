@@ -3,13 +3,13 @@ import {Provider} from 'react-redux';
 import store from "../../modules/createStore";
 import Canvas from "../Canvas/Canvas";
 import Timer from "../Timer/Timer"
+import Header from "../Header/Header";
 
 const App: React.FC = () => {
   return (
       <Provider store={store}>
         <div className="App">
-            <Timer />
-            <p>お題 1/1</p>
+            <Header />
             <Canvas />
         </div>
       </Provider>

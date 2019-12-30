@@ -42,20 +42,11 @@ const useBoundActions = () => {
     }, [dispatch]);
 };
 
-const width = 1000,
-    height = 50;
 
-const margin = {
-    top: 10,
-    bottom: 10,
-    right: 50,
-    left: 50
-};
 
 const Container = baseStyled(Grid)`
   flex: 1;
-  width: ${width + margin.left + margin.right}px;
-  height: ${height + margin.top + margin.bottom}px;
+  width: 100%;
   margin: auto;
   position: relative;
 `;

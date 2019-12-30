@@ -10,7 +10,8 @@ const Canvas: React.FC = () => {
         const color = '#000';
         const strokeWidth = '5px' ;
         let activeLine: d3.Selection<SVGPathElement, never[], HTMLElement, any> | null;
-        let data: [number, number][] = [];
+        let data: [number, number, number][] = [];
+        let sendingData = [];
 
         const renderPath = d3.line()
             .x(function(d) { return d[0]; })
@@ -34,15 +35,16 @@ const Canvas: React.FC = () => {
             if (!activeLine) {
                 return;
             }
-            data.push(d3.mouse(container));
+            data.push(d3.mouse(container).concat([new Date().getTime()]) as [number, number, number]);
             activeLine.datum(data);
             activeLine.attr('d', renderPath);
         };
 
         const dragended = () => {
+            sendingData.push(data);
+            // TODO: ここでAPIへのPOSTをdispatch
             activeLine = null;
             data = [];
-            console.log(data);
         };
 
         const drag = d3.drag()
@@ -75,20 +77,11 @@ const Canvas: React.FC = () => {
 
 export default Canvas;
 
-const width = 1000,
-    height = 600;
-
-const margin = {
-    top: 50,
-    bottom: 50,
-    right: 50,
-    left: 50
-};
 
 const Container = baseStyled(Grid)`
   flex: 1;
-  width: ${width + margin.left + margin.right}px;
-  height: ${height + margin.top + margin.bottom}px;
+  height: 80vh;
+  width: 90%;
   margin: auto;
   position: relative;
 `;
