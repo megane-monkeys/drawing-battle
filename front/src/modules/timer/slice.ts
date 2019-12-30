@@ -11,6 +11,9 @@ const slice = createSlice({
     name: "timer",
     initialState,
     reducers: {
+        abortTimer: (state, action) => {
+            state.state = TimerStatus.ABORT;
+        },
         startTimer: (state, action) => {
             state.startTime = new Date().getTime();
             state.state = TimerStatus.WORKING;

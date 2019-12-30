@@ -8,7 +8,7 @@ import {TimerStatus} from "../../constants/timerStatus";
 
 const Timer: React.FC = () => {
     const state = useSelector(timerSelectors);
-    const { updateTimer, stopTimer } = useBoundActions();
+    const { updateTimer } = useBoundActions();
     useEffect(() => {
         if (state.state === TimerStatus.WORKING){
             setTimeout(() => {
@@ -18,8 +18,7 @@ const Timer: React.FC = () => {
     });
     return (
         <Container>
-            <span>{(state.milliseconds/1000).toFixed(2)}</span>
-            <button onClick={() => stopTimer(null)}>stop</button>
+            <span>{(state.milliseconds/1000).toFixed(2)} 秒</span>
         </Container>
     );
 };
@@ -32,7 +31,6 @@ const useBoundActions = () => {
         return bindActionCreators(
             {
                 updateTimer: timerActions.updateTimer,
-                stopTimer: timerActions.stopTimer
             },
             dispatch
         );

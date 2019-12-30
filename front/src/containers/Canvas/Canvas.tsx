@@ -4,7 +4,6 @@ import { Grid } from "@material-ui/core";
 import baseStyled from "styled-components";
 import * as d3 from "d3";
 import {TimerStatus} from "../../constants/timerStatus";
-import Button from "../../components/Button/Button";
 import {bindActionCreators} from "redux";
 import {timerSelectors, timerActions} from "../../modules/timer";
 import {predictionSelectors, predictionActions} from "../../modules/prediction";
@@ -12,14 +11,10 @@ import {predictionSelectors, predictionActions} from "../../modules/prediction";
 const Canvas: React.FC = () => {
     const timerState = useSelector(timerSelectors);
     const predictionState = useSelector(predictionSelectors);
-    const { initialize, fetchAnswer, startTimer, fetchPrediction, resetTimer, stopTimer } = useBoundActions();
+    const { initialize, fetchAnswer, startTimer, fetchPrediction, stopTimer } = useBoundActions();
     let data: number[][] = [];
     let sendingData: number[][][] = [];
 
-    const start = () => {
-        startTimer(null);
-        fetchAnswer(null);
-    };
     useEffect(() => {
         const color = '#000';
         const strokeWidth = '5px' ;
@@ -78,8 +73,6 @@ const Canvas: React.FC = () => {
             data = [];
         };
 
-        d3.select('#clear').on('click', clear);
-
         if (predictionState.answer === predictionState.prediction) {
             stopTimer(null);
         }
@@ -92,10 +85,6 @@ const Canvas: React.FC = () => {
     }, [data]);
     return (
         <Container>
-            {(timerState.state === TimerStatus.INITIAL) && <Button onClick={start}>スタート</Button>}
-            {(timerState.state === TimerStatus.FINISH) && <Button onClick={() => resetTimer(null)}>もう一回</Button>}
-            {(timerState.state === TimerStatus.FINISH) && <ResultText>記録: {(timerState.milliseconds/1000).toFixed(2)}秒</ResultText>}
-            <button id="clear">clear</button>
             <svg id="canvas"/>
         </Container>
     );
@@ -109,13 +98,9 @@ const useBoundActions = () => {
     return useMemo(() => {
         return bindActionCreators(
             {
-                updateTimer: timerActions.updateTimer,
-                resetTimer: timerActions.resetTimer,
                 startTimer: timerActions.startTimer,
                 stopTimer: timerActions.stopTimer,
-                setAnswer: predictionActions.setAnswer,
                 fetchAnswer: predictionActions.fetchAnswer,
-                setPrediction: predictionActions.setPrediction,
                 fetchPrediction: predictionActions.fetchPrediction,
                 initialize: predictionActions.initialize,
             },
@@ -126,24 +111,9 @@ const useBoundActions = () => {
 
 const Container = baseStyled(Grid)`
   flex: 1;
-  height: 80vh;
+  height: 70vh;
   width: 90%;
   margin: auto;
   position: relative;
 `;
 
-const ResultText = baseStyled(Grid)`
-  position: absolute;
-  top: 30%;
-  left: 0;
-  right: 0;
-  margin: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: dimgray;
-  font-size: 32px;
-  font-weight: bold;
-  text-stroke: 3px white; 
-  -webkit-text-stroke: 1px white; 
-`;
