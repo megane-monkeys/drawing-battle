@@ -4,6 +4,7 @@ import { Grid } from "@material-ui/core";
 import baseStyled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import {predictionActions, predictionSelectors} from "../../modules/prediction";
+import {PredictionDefaultAnswer} from "../../constants/predictionStatus";
 
 const AnswerSelect: React.FC = () => {
     const state = useSelector(predictionSelectors);
@@ -13,9 +14,13 @@ const AnswerSelect: React.FC = () => {
     }, []);
     return (
         <Container>
-            <select onChange={(e) => setAnswer(e.target.value)} value={state.selectedAnswer}>{state.answers.map((d, i) => {
-                return(<option value={d}>{i}: {d}</option>);
+            <label>お題設定:{" "}
+                <select onChange={(e) => setAnswer(e.target.value)} value={state.selectedAnswer}>
+                <option value={PredictionDefaultAnswer}>{PredictionDefaultAnswer}</option>
+                {state.answers.map((d, i) => {
+                return(<option value={d}>{i+1}: {d}</option>);
             })}</select>
+            </label>
         </Container>
     );
 };

@@ -1,6 +1,6 @@
 import React, {useMemo} from 'react';
 import Timer from "../Timer/Timer"
-import {predictionSelectors} from "../../modules/prediction"
+import {predictionActions, predictionSelectors} from "../../modules/prediction"
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import {TimerStatus} from "../../constants/timerStatus";
@@ -9,24 +9,29 @@ import {bindActionCreators} from "redux";
 import {timerActions, timerSelectors} from "../../modules/timer";
 import {Grid} from "@material-ui/core";
 import AnswerSelect from "../AnswerSelect/AnswerSelect";
+import {PredictionDefaultAnswer} from "../../constants/predictionStatus";
 
 const Header: React.FC = () => {
-    const timerState = useSelector(timerSelectors);
-    const predictionState = useSelector(predictionSelectors);
-    const { resetTimer, abortTimer } = useBoundActions();
-
+    const { state, milliseconds } = useSelector(timerSelectors);
+    const { selectedAnswer, prediction, answers } = useSelector(predictionSelectors);
+    const { setAnswer, resetTimer, abortTimer } = useBoundActions();
+    const start = () => {
+        if (selectedAnswer === "ランダム") {
+            setAnswer(answers[Math.floor(Math.random() * answers.length)]);
+        }
+        resetTimer(null);
+    };
     return (
         <Container className="Header">
-            <h2>お題 「{predictionState.selectedAnswer || "???"}」</h2>
+            <h2>お題 「{selectedAnswer === PredictionDefaultAnswer ? "???" : selectedAnswer}」</h2>
             <Wrapper>
-                <PredictionText>AI判定→ {predictionState.prediction} {predictionState.selectedAnswer === predictionState.prediction ? "!" : "?"}</PredictionText>
-                <Timer />
-                <AnswerSelect />
+                <PredictionText>AI判定→ {prediction} {selectedAnswer === prediction ? "!" : "?"}</PredictionText>
+                {(state === TimerStatus.WORKING) ? <Timer /> : <AnswerSelect />}
             </Wrapper>
-            {(timerState.state === TimerStatus.INITIAL) && <Button onClick={() => resetTimer(null)}>スタート</Button>}
-            {(timerState.state === TimerStatus.WORKING) && <Button onClick={() => abortTimer(null)} color={"secondary"}>ギブアップ</Button>}
-            {(timerState.state === TimerStatus.FINISH || timerState.state === TimerStatus.ABORT) && <Button onClick={() => resetTimer(null)}>もう一回</Button>}
-            {(timerState.state === TimerStatus.FINISH) && <ResultText>記録: {(timerState.milliseconds/1000).toFixed(2)}秒</ResultText>}
+            {(state === TimerStatus.INITIAL) && <Button onClick={start}>スタート</Button>}
+            {(state === TimerStatus.WORKING) && <Button onClick={() => abortTimer(null)} color={"secondary"}>ギブアップ</Button>}
+            {(state === TimerStatus.FINISH || state === TimerStatus.ABORT) && <Button onClick={start}>もう一回</Button>}
+            {(state === TimerStatus.FINISH) && <ResultText>記録: {(milliseconds/1000).toFixed(2)}秒</ResultText>}
         </Container>
     );
 };
@@ -40,6 +45,7 @@ const useBoundActions = () => {
             {
                 resetTimer: timerActions.resetTimer,
                 abortTimer: timerActions.abortTimer,
+                setAnswer: predictionActions.setAnswer,
             },
             dispatch
         );
