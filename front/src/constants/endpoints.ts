@@ -1,5 +1,4 @@
-const URL = 'http://localhost:3001/d-battle/api/v1';
 export const Endpoints = {
-    answer: URL + "/answers",
-    prediction: URL + "/predicts"
+    answer: "/api/v1/answers",
+    prediction: "/api/v1/predicts"
 };
