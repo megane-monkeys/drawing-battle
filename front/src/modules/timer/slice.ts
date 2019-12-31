@@ -24,10 +24,8 @@ const slice = createSlice({
         },
         stopTimer: (state, action) => {
             state.state = TimerStatus.FINISH;
-        },
-        updateTimer: (state, action) => {
             state.milliseconds = new Date().getTime() - state.startTime;
-        }
+        },
     }
 });
 export const actions = {
