@@ -1,6 +1,6 @@
 import { actions } from "./slice";
 import axios from "axios"
-import { put, call, select, takeEvery } from 'redux-saga/effects';
+import { put, call, select, takeLatest } from 'redux-saga/effects';
 import { Endpoints } from "../../constants/endpoints";
 import {predictionSelectors} from "../../modules/prediction";
 
@@ -52,7 +52,7 @@ function* fetchPrediction() {
     }
 }
 export const sagas = [
-    takeEvery(actions.fetchAnswers.toString(), fetchAnswers),
-    takeEvery(actions.fetchPrediction.toString(), fetchPrediction)
+    takeLatest(actions.fetchAnswers.toString(), fetchAnswers),
+    takeLatest(actions.fetchPrediction.toString(), fetchPrediction)
 ];
 
