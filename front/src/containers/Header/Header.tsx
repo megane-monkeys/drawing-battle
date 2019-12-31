@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {predictionActions, predictionSelectors} from "../../modules/prediction"
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
@@ -13,6 +13,11 @@ const Header: React.FC = () => {
     const { state, milliseconds } = useSelector(timerSelectors);
     const { answer, prediction, answers, random } = useSelector(predictionSelectors);
     const { setAnswer, resetTimer, abortTimer } = useBoundActions();
+
+    useEffect(() => {
+        document.title = "Drawing Race";
+    });
+
     const start = () => {
         if (random) {
             setAnswer(answers[Math.floor(Math.random() * answers.length)]);
