@@ -14,11 +14,13 @@ const AnswerSelect: React.FC = () => {
     }, []);
     return (
         <Container>
-            <select onChange={(e) => setAnswer(e.target.value)} value={state.selectedAnswer}>
+            <label>お題設定:{" "}
+                <select onChange={(e) => setAnswer(e.target.value)} value={state.selectedAnswer}>
                 <option value={PredictionDefaultAnswer}>{PredictionDefaultAnswer}</option>
                 {state.answers.map((d, i) => {
                 return(<option value={d}>{i+1}: {d}</option>);
             })}</select>
+            </label>
         </Container>
     );
 };
