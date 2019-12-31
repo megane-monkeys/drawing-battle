@@ -10,11 +10,11 @@ const AnswerSelect: React.FC = () => {
     const { fetchAnswers, setAnswer } = useBoundActions();
     useEffect(() => {
         fetchAnswers(null);
-    });
+    }, []);
     return (
         <Container>
-            <select onChange={setAnswer} value={state.selectedAnswer}>{state.answers.map((d, i) => {
-                return(<option value={i}>{i}: {d}</option>);
+            <select onChange={(e) => setAnswer(e.target.value)} value={state.selectedAnswer}>{state.answers.map((d, i) => {
+                return(<option value={d}>{i}: {d}</option>);
             })}</select>
         </Container>
     );

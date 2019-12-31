@@ -21,7 +21,6 @@ const slice = createSlice({
     reducers: {
         initialize: (state, action) => {
             state.status = PredictionStatus.INITIAL;
-            state.selectedAnswer = "";
             state.prediction = "-";
             state.strokes = [];
         },
