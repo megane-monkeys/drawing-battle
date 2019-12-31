@@ -19,15 +19,15 @@ class model():
         return self.classes[torch.argmax(logits[0])]
 
     def format_data(self, data):
-        x_min = np.min([point[0] for stroke in data for point in stroke])
-        x_max = np.max([point[0] for stroke in data for point in stroke])
-        y_min = np.min([point[1] for stroke in data for point in stroke])
-        y_max = np.max([point[1] for stroke in data for point in stroke])
+        x_min = int(np.min([point[0] for stroke in data for point in stroke]))
+        x_max = int(np.max([point[0] for stroke in data for point in stroke]))
+        y_min = int(np.min([point[1] for stroke in data for point in stroke]))
+        y_max = int(np.max([point[1] for stroke in data for point in stroke]))
 
         image = np.zeros((x_max - x_min + 1, y_max - y_min + 1, 3), dtype = np.uint8)
 
         for stroke in data:
-            coords = [[point[0] - x_min, point[1] - y_min] for point in stroke]
+            coords = [[int(point[0] - x_min), int(point[1] - y_min)] for point in stroke]
             for i in range(len(coords) - 1):
                 cv2.line(image, (coords[i][0], coords[i][1]), (coords[i+1][0], coords[i+1][0]),  (255, 255, 255) , 5)
 

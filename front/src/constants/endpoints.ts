@@ -1,4 +1,4 @@
 export const Endpoints = {
-    answer: "/answers",
-    prediction: "/predicts"
+    answer: "/api/v1/answers",
+    prediction: "/api/v1/predicts"
 };
