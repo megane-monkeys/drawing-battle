@@ -16,6 +16,7 @@ class model():
     def predict(self, data):
         data = self.format_data(data)
         logits = self.model(data)
+        print(logits)
         return self.classes[torch.argmax(logits[0])]
 
     def format_data(self, data):
@@ -24,18 +25,16 @@ class model():
         y_min = int(np.min([point[1] for stroke in data for point in stroke]))
         y_max = int(np.max([point[1] for stroke in data for point in stroke]))
 
-        image = np.zeros((x_max - x_min + 1, y_max - y_min + 1, 3), dtype = np.uint8)
-
+        image = np.zeros((y_max - y_min + 1, x_max - x_min + 1, 3), dtype = np.uint8)
         for stroke in data:
-            coords = [[int(point[0] - x_min), int(point[1] - y_min)] for point in stroke]
+            coords = [[int(point[1] - y_min), int(point[0] - x_min)] for point in stroke]
             for i in range(len(coords) - 1):
-                cv2.line(image, (coords[i][0], coords[i][1]), (coords[i+1][0], coords[i+1][0]),  (255, 255, 255) , 5)
-
+                cv2.line(image, (coords[i][1], coords[i][0]), (coords[i+1][1], coords[i+1][0]),  (255, 255, 255) , 10)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        image = cv2.resize(image, (28, 28))
-        cv2.imwrite(os.path.join(os.path.dirname(__file__), './ena_opencv_gray.jpg'), image)
-
+        image = cv2.resize(image, (28, 28), interpolation=cv2.INTER_NEAREST)
+        cv2.imwrite(os.path.join(os.path.dirname(__file__), './ena_opencv_gray_final.jpg'), image)
         image = np.array(image, dtype=np.float32)[None, None, :, :]
+        image /= 255
         image = torch.from_numpy(image)
         return image
 
