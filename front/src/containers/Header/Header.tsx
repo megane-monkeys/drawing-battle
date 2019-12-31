@@ -8,6 +8,7 @@ import Button from "../../components/Button/Button";
 import {bindActionCreators} from "redux";
 import {timerActions, timerSelectors} from "../../modules/timer";
 import {Grid} from "@material-ui/core";
+import AnswerSelect from "../AnswerSelect/AnswerSelect";
 
 const Header: React.FC = () => {
     const timerState = useSelector(timerSelectors);
@@ -16,10 +17,11 @@ const Header: React.FC = () => {
 
     return (
         <Container className="Header">
-            <h2>お題 「{predictionState.answer || "???"}」</h2>
+            <h2>お題 「{predictionState.selectedAnswer || "???"}」</h2>
             <Wrapper>
-                <PredictionText>AI判定→ {predictionState.prediction} {predictionState.answer === predictionState.prediction ? "!" : "?"}</PredictionText>
+                <PredictionText>AI判定→ {predictionState.prediction} {predictionState.selectedAnswer === predictionState.prediction ? "!" : "?"}</PredictionText>
                 <Timer />
+                <AnswerSelect />
             </Wrapper>
             {(timerState.state === TimerStatus.INITIAL) && <Button onClick={() => resetTimer(null)}>スタート</Button>}
             {(timerState.state === TimerStatus.WORKING) && <Button onClick={() => abortTimer(null)} color={"secondary"}>ギブアップ</Button>}

@@ -1,14 +1,11 @@
 import { actions } from "./slice";
 import axios from "axios"
-import { put, call, takeEvery } from 'redux-saga/effects';
+import { put, call, select, takeEvery } from 'redux-saga/effects';
 import { Endpoints } from "../../constants/endpoints";
+import {predictionSelectors} from "../../modules/prediction";
 
-const fetchAnswerAjax = () => {
+const fetchAnswersAjax = () => {
     return (axios.get(Endpoints.answer,
-    { params: {
-                seed: 1
-                }
-            }
     )
         .then((res) => {
             const data = res.data;
@@ -20,10 +17,10 @@ const fetchAnswerAjax = () => {
 
 };
 
-function* fetchAnswer() {
-    const { data, error } = yield call(fetchAnswerAjax);
+function* fetchAnswers() {
+    const { data, error } = yield call(fetchAnswersAjax);
     if (data) {
-        yield put(actions.setAnswer(data.label));
+        yield put(actions.setAnswers(data));
     } else {
         console.log(error);
     }
@@ -43,8 +40,8 @@ const fetchPredictionAjax = (strokes: number[][][]) => {
 
 };
 
-function* fetchPrediction(action: { payload: any; type: string } & {}) {
-    const strokes = action.payload;
+function* fetchPrediction() {
+    const { strokes } = yield select(predictionSelectors);
     const { data, error } = yield call(fetchPredictionAjax, strokes);
     if (data) {
         yield put(actions.setPrediction(data.label));
@@ -53,7 +50,7 @@ function* fetchPrediction(action: { payload: any; type: string } & {}) {
     }
 }
 export const sagas = [
-    takeEvery(actions.fetchAnswer.toString(), fetchAnswer),
+    takeEvery(actions.fetchAnswers.toString(), fetchAnswers),
     takeEvery(actions.fetchPrediction.toString(), fetchPrediction)
 ];
 

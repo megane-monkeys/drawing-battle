@@ -11,9 +11,8 @@ import {predictionSelectors, predictionActions} from "../../modules/prediction";
 const Canvas: React.FC = () => {
     const timerState = useSelector(timerSelectors);
     const predictionState = useSelector(predictionSelectors);
-    const { initialize, fetchAnswer, startTimer, fetchPrediction, stopTimer } = useBoundActions();
+    const { initialize, fetchAnswers, startTimer, fetchPrediction, stopTimer, pushStrokes } = useBoundActions();
     let data: number[][] = [];
-    let sendingData: number[][][] = [];
 
     useEffect(() => {
         const color = '#000';
@@ -48,8 +47,8 @@ const Canvas: React.FC = () => {
         };
 
         const dragended = () => {
-            sendingData.push(data);
-            fetchPrediction(sendingData);
+            pushStrokes(data);
+            fetchPrediction(null);
             activeLine = null;
             data = [];
         };
@@ -73,13 +72,13 @@ const Canvas: React.FC = () => {
             data = [];
         };
 
-        if (predictionState.answer === predictionState.prediction) {
+        if (predictionState.selectedAnswer === predictionState.prediction) {
             stopTimer(null);
         }
         if (timerState.state === TimerStatus.RESETTING) {
             initialize(null);
             clear();
-            fetchAnswer(null);
+            fetchAnswers(null);
             startTimer(null);
         }
     }, [data]);
@@ -100,9 +99,10 @@ const useBoundActions = () => {
             {
                 startTimer: timerActions.startTimer,
                 stopTimer: timerActions.stopTimer,
-                fetchAnswer: predictionActions.fetchAnswer,
+                fetchAnswers: predictionActions.fetchAnswers,
                 fetchPrediction: predictionActions.fetchPrediction,
                 initialize: predictionActions.initialize,
+                pushStrokes: predictionActions.pushStrokes,
             },
             dispatch
         );
