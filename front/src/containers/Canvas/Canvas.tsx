@@ -1,19 +1,19 @@
 import React, {useEffect, useMemo} from 'react';
-import { useDispatch, useSelector } from "react-redux";
-import { Grid } from "@material-ui/core";
+import {useDispatch, useSelector} from "react-redux";
+import {Grid} from "@material-ui/core";
 import baseStyled from "styled-components";
 import * as d3 from "d3";
 import {TimerStatus} from "../../constants/timerStatus";
 import {bindActionCreators} from "redux";
-import {timerSelectors, timerActions} from "../../modules/timer";
-import {predictionSelectors, predictionActions} from "../../modules/prediction";
+import {timerActions, timerSelectors} from "../../modules/timer";
+import {predictionActions, predictionSelectors} from "../../modules/prediction";
 
 const Canvas: React.FC = () => {
     const { state } = useSelector(timerSelectors);
     const { answer, prediction } = useSelector(predictionSelectors);
     const { initialize, startTimer, fetchPrediction, stopTimer, pushStrokes } = useBoundActions();
     let data: number[][] = [];
-
+    // TODO: useRef使ってもっとうまくできそう
     useEffect(() => {
         const color = '#000';
         const strokeWidth = '5px' ;
@@ -25,6 +25,9 @@ const Canvas: React.FC = () => {
             .curve(d3.curveBasis);
 
         const dragstarted = () => {
+            if (state !== TimerStatus.WORKING) {
+                return;
+            }
             activeLine = svg.append('path')
                 .datum([])
                 .attr('class', 'line')
@@ -34,6 +37,9 @@ const Canvas: React.FC = () => {
         };
 
         const dragged = () => {
+            if (state !== TimerStatus.WORKING) {
+                return;
+            }
             const container = d3.select<SVGGElement, unknown>("#canvas").node();
             if (!container) {
                 return;
@@ -47,6 +53,9 @@ const Canvas: React.FC = () => {
         };
 
         const dragended = () => {
+            if (state !== TimerStatus.WORKING) {
+                return;
+            }
             pushStrokes(data);
             fetchPrediction(null);
             activeLine = null;
