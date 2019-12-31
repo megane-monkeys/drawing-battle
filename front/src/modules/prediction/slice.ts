@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { PredictionStatus } from "../../constants/predictionStatus"
+import { PredictionStatus, PredictionDefaultAnswer } from "../../constants/predictionStatus"
 type State = {
     answers: string[];
     selectedAnswer: string;
@@ -9,7 +9,7 @@ type State = {
 }
 const initialState: State = {
     answers: [],
-    selectedAnswer: "",
+    selectedAnswer: PredictionDefaultAnswer,
     prediction: "-",
     status: PredictionStatus.INITIAL,
     strokes: []

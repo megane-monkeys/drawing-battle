@@ -4,3 +4,5 @@ export enum PredictionStatus {
     PREDICTION = 'PREDICTION',
     FETCHING_PREDICTION = 'FETCHING_PREDICTION'
 }
+
+export const PredictionDefaultAnswer = "ランダム";
