@@ -1,16 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { PredictionStatus, PredictionDefaultAnswer } from "../../constants/predictionStatus"
+import { PredictionStatus } from "../../constants/predictionStatus"
 type State = {
     answers: string[];
-    selectedAnswer: string;
+    answer: string;
     prediction: string;
+    random: boolean;
     status: string;
     strokes: number[][][];
 }
 const initialState: State = {
     answers: [],
-    selectedAnswer: PredictionDefaultAnswer,
+    answer: "",
     prediction: "-",
+    random: true,
     status: PredictionStatus.INITIAL,
     strokes: []
 };
@@ -24,11 +26,14 @@ const slice = createSlice({
             state.prediction = "-";
             state.strokes = [];
         },
+        toggleRandom: (state, action) => {
+            state.random = !state.random;
+        },
         setAnswers: (state, action) => {
             state.answers = action.payload;
         },
         setAnswer: (state, action) => {
-            state.selectedAnswer = action.payload;
+            state.answer = action.payload;
             state.status = PredictionStatus.PREDICTION;
         },
         setPrediction: (state, action: { payload: string; type: string } & {}) => {

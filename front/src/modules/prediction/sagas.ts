@@ -21,6 +21,8 @@ function* fetchAnswers() {
     const { data, error } = yield call(fetchAnswersAjax);
     if (data) {
         yield put(actions.setAnswers(data));
+        const { answers } = yield select(predictionSelectors);
+        yield put(actions.setAnswer(answers[0]));
     } else {
         console.log(error);
     }
