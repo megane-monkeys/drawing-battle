@@ -72,7 +72,7 @@ const Canvas: React.FC = () => {
             data = [];
         };
 
-        if (answer === prediction) {
+        if (answer === prediction && state === TimerStatus.WORKING) {
             stopTimer(null);
         }
         if (state === TimerStatus.RESETTING) {
