@@ -15,10 +15,9 @@ const AnswerSelect: React.FC = () => {
         if (answers.length === 0) {
             fetchAnswers(null);
         }
-    }, []);
+    });
     return (
         <Container>
-            出題:{" "}
                 ランダム<Switch checked={!random} onChange={() => toggleRandom(null)} color="default" />選択
                 <select disabled={random} onChange={onChange} value={answer}>
                 {answers.map((d, i) => {

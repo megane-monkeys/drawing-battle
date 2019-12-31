@@ -1,5 +1,4 @@
 import React, {useMemo} from 'react';
-import Timer from "../Timer/Timer"
 import {predictionActions, predictionSelectors} from "../../modules/prediction"
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
@@ -25,7 +24,7 @@ const Header: React.FC = () => {
             <AnswerText>お題 「{random && (state !== TimerStatus.WORKING) ? "???" : answer}」</AnswerText>
             <Wrapper>
                 {(state === TimerStatus.WORKING) && <PredictionText>AI判定→ {prediction} ?</PredictionText>}
-                {(state === TimerStatus.WORKING) ? <Timer /> : <AnswerSelect />}
+                {(state !== TimerStatus.WORKING) && <AnswerSelect />}
             </Wrapper>
             {(state === TimerStatus.INITIAL) && <Button onClick={start}>スタート</Button>}
             {(state === TimerStatus.WORKING) && <Button onClick={() => abortTimer(null)} color={"secondary"}>ギブアップ</Button>}
@@ -56,7 +55,6 @@ const Container = styled.div`
 
 const Wrapper = styled.div`
     display: flex;
-    text-align: right;
     height: 40px;
     margin: 0 30px;
 `;
