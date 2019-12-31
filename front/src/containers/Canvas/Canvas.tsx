@@ -9,9 +9,9 @@ import {timerSelectors, timerActions} from "../../modules/timer";
 import {predictionSelectors, predictionActions} from "../../modules/prediction";
 
 const Canvas: React.FC = () => {
-    const timerState = useSelector(timerSelectors);
-    const predictionState = useSelector(predictionSelectors);
-    const { initialize, fetchAnswers, startTimer, fetchPrediction, stopTimer, pushStrokes } = useBoundActions();
+    const { state } = useSelector(timerSelectors);
+    const { answer, prediction } = useSelector(predictionSelectors);
+    const { initialize, startTimer, fetchPrediction, stopTimer, pushStrokes } = useBoundActions();
     let data: number[][] = [];
 
     useEffect(() => {
@@ -72,13 +72,12 @@ const Canvas: React.FC = () => {
             data = [];
         };
 
-        if (predictionState.selectedAnswer === predictionState.prediction) {
+        if (answer === prediction) {
             stopTimer(null);
         }
-        if (timerState.state === TimerStatus.RESETTING) {
+        if (state === TimerStatus.RESETTING) {
             initialize(null);
             clear();
-            fetchAnswers(null);
             startTimer(null);
         }
     }, [data]);
@@ -99,7 +98,6 @@ const useBoundActions = () => {
             {
                 startTimer: timerActions.startTimer,
                 stopTimer: timerActions.stopTimer,
-                fetchAnswers: predictionActions.fetchAnswers,
                 fetchPrediction: predictionActions.fetchPrediction,
                 initialize: predictionActions.initialize,
                 pushStrokes: predictionActions.pushStrokes,

@@ -5,4 +5,3 @@ export enum PredictionStatus {
     FETCHING_PREDICTION = 'FETCHING_PREDICTION'
 }
 
-export const PredictionDefaultAnswer = "ランダム";

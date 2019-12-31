@@ -9,23 +9,22 @@ import {bindActionCreators} from "redux";
 import {timerActions, timerSelectors} from "../../modules/timer";
 import {Grid} from "@material-ui/core";
 import AnswerSelect from "../AnswerSelect/AnswerSelect";
-import {PredictionDefaultAnswer} from "../../constants/predictionStatus";
 
 const Header: React.FC = () => {
     const { state, milliseconds } = useSelector(timerSelectors);
-    const { selectedAnswer, prediction, answers } = useSelector(predictionSelectors);
+    const { answer, prediction, answers, random } = useSelector(predictionSelectors);
     const { setAnswer, resetTimer, abortTimer } = useBoundActions();
     const start = () => {
-        if (selectedAnswer === "ランダム") {
+        if (random) {
             setAnswer(answers[Math.floor(Math.random() * answers.length)]);
         }
         resetTimer(null);
     };
     return (
         <Container className="Header">
-            <h2>お題 「{selectedAnswer === PredictionDefaultAnswer ? "???" : selectedAnswer}」</h2>
+            <AnswerText>お題 「{random && (state !== TimerStatus.WORKING) ? "???" : answer}」</AnswerText>
             <Wrapper>
-                <PredictionText>AI判定→ {prediction} {selectedAnswer === prediction ? "!" : "?"}</PredictionText>
+                {(state === TimerStatus.WORKING) && <PredictionText>AI判定→ {prediction} ?</PredictionText>}
                 {(state === TimerStatus.WORKING) ? <Timer /> : <AnswerSelect />}
             </Wrapper>
             {(state === TimerStatus.INITIAL) && <Button onClick={start}>スタート</Button>}
@@ -58,7 +57,8 @@ const Container = styled.div`
 const Wrapper = styled.div`
     display: flex;
     text-align: right;
-    margin: 0 10%;
+    height: 40px;
+    margin: 0 30px;
 `;
 const ResultText = styled(Grid)`
   position: absolute;
@@ -80,5 +80,8 @@ const ResultText = styled(Grid)`
   opacity: 0.7;
 `;
 const PredictionText = styled(Grid)`
+  margin: auto;
+`;
+const AnswerText = styled.h2`
   margin: auto;
 `;
