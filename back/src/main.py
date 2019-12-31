@@ -12,11 +12,10 @@ def render_home():
 
 @app.route('/api/v1/answers', methods=['GET'])
 def get_answers():
-    seed = request.args.get('seed')
-    random.seed(seed)
-    item = {"label": classes[random.randrange(0, len(classes))]}
-
-    return jsonify(item)
+    #seed = request.args.get('seed')
+    #random.seed(seed)
+    #item = {"label": classes[random.randrange(0, len(classes))]}
+    return jsonify(classes)
 
 @app.route('/api/v1/predicts', methods=['POST'])
 def get_predicts():
