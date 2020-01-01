@@ -41,7 +41,4 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - build-deploy:
-          filters:
-            branches:
-              only: develop
+      - build-deploy
