@@ -3,15 +3,16 @@ import {useDispatch, useSelector} from "react-redux";
 import {Grid} from "@material-ui/core";
 import baseStyled from "styled-components";
 import * as d3 from "d3";
-import {TimerStatus} from "../../constants/timerStatus";
+import {AppStatus} from "../../constants/appStatus";
 import {bindActionCreators} from "redux";
-import {timerActions, timerSelectors} from "../../modules/timer";
+import {timerActions} from "../../modules/timer";
 import {predictionActions, predictionSelectors} from "../../modules/prediction";
+import {appActions, appSelectors} from "../../modules/app";
 
 const Canvas: React.FC = () => {
-    const { state } = useSelector(timerSelectors);
+    const { state } = useSelector(appSelectors);
     const { answer, prediction } = useSelector(predictionSelectors);
-    const { initialize, startTimer, fetchPrediction, stopTimer, pushStrokes } = useBoundActions();
+    const { initialize, startTimer, fetchPrediction, stopTimer, pushStrokes, success, start } = useBoundActions();
     let data: number[][] = [];
     // TODO: useRef使ってもっとうまくできそう
     useEffect(() => {
@@ -25,7 +26,7 @@ const Canvas: React.FC = () => {
             .curve(d3.curveBasis);
 
         const dragstarted = () => {
-            if (state !== TimerStatus.WORKING) {
+            if (state !== AppStatus.DRAWING) {
                 return;
             }
             activeLine = svg.append('path')
@@ -37,7 +38,7 @@ const Canvas: React.FC = () => {
         };
 
         const dragged = () => {
-            if (state !== TimerStatus.WORKING) {
+            if (state !== AppStatus.DRAWING) {
                 return;
             }
             const container = d3.select<SVGGElement, unknown>("#canvas").node();
@@ -53,7 +54,7 @@ const Canvas: React.FC = () => {
         };
 
         const dragended = () => {
-            if (state !== TimerStatus.WORKING) {
+            if (state !== AppStatus.DRAWING) {
                 return;
             }
             pushStrokes(data);
@@ -81,13 +82,15 @@ const Canvas: React.FC = () => {
             data = [];
         };
 
-        if (answer === prediction && state === TimerStatus.WORKING) {
+        if (answer === prediction && state === AppStatus.DRAWING) {
             stopTimer(null);
+            success(null);
         }
-        if (state === TimerStatus.RESETTING) {
-            initialize(null);
+        if (state === AppStatus.RESETTING) {
             clear();
+            initialize(null);
             startTimer(null);
+            start(null);
         }
     }, [data]);
     return (
@@ -105,8 +108,11 @@ const useBoundActions = () => {
     return useMemo(() => {
         return bindActionCreators(
             {
-                startTimer: timerActions.startTimer,
+                startTimer: timerActions.restartTimer,
                 stopTimer: timerActions.stopTimer,
+                ready: appActions.ready,
+                start: appActions.start,
+                success: appActions.success,
                 fetchPrediction: predictionActions.fetchPrediction,
                 initialize: predictionActions.initialize,
                 pushStrokes: predictionActions.pushStrokes,
