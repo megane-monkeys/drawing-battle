@@ -15,9 +15,6 @@ const slice = createSlice({
         start: (state, action) => {
             state.state = AppStatus.DRAWING;
         },
-        reset: (state, action) => {
-            state.state = AppStatus.RESETTING;
-        },
         success: (state, action) => {
             state.state = AppStatus.SUCCESS;
         },

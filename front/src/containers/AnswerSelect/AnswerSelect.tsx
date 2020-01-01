@@ -1,13 +1,13 @@
-import React, {ChangeEvent, useEffect, useMemo} from 'react';
-import { bindActionCreators } from 'redux';
+import React, {ChangeEvent, useEffect} from 'react';
 import { Grid, Switch } from "@material-ui/core";
 import baseStyled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {predictionActions, predictionSelectors} from "../../modules/prediction";
+import {useBoundActions} from "../../components/hooks/useBoundActions";
 
 const AnswerSelect: React.FC = () => {
-    const { answers, answer, random} = useSelector(predictionSelectors);
-    const { fetchAnswers, setAnswer, toggleRandom } = useBoundActions();
+    const { answers, answer, random } = useSelector(predictionSelectors);
+    const { fetchAnswers, setAnswer, toggleRandom } = useBoundActions(predictionActions);
     const onChange = (e: ChangeEvent<HTMLSelectElement>) => {
         setAnswer(e.target.value);
     };
@@ -28,21 +28,6 @@ const AnswerSelect: React.FC = () => {
 };
 
 export default AnswerSelect;
-
-const useBoundActions = () => {
-    const dispatch = useDispatch();
-    return useMemo(() => {
-        return bindActionCreators(
-            {
-                fetchAnswers: predictionActions.fetchAnswers,
-                setAnswer: predictionActions.setAnswer,
-                toggleRandom: predictionActions.toggleRandom,
-            },
-            dispatch
-        );
-    }, [dispatch]);
-};
-
 
 const Container = baseStyled(Grid)`
   flex: 1;
