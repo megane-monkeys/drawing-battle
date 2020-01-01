@@ -32,7 +32,7 @@ jobs:
           key: v1-dependencies-{{ checksum "./front/package.json" }}
 
       # run build!
-      - run: cd ./front && yarfn build
+      - run: cd ./front && yarn build
 
       - run: 
           command: |
