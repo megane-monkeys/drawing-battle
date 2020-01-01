@@ -1,18 +1,16 @@
-import React, {useEffect, useMemo, useRef} from 'react';
-import {useDispatch, useSelector} from "react-redux";
+import React, {useEffect, useRef} from 'react';
+import {useSelector} from "react-redux";
 import {Grid} from "@material-ui/core";
 import baseStyled from "styled-components";
 import * as d3 from "d3";
 import {AppStatus} from "../../constants/appStatus";
-import {bindActionCreators} from "redux";
-import {timerActions} from "../../modules/timer";
-import {predictionActions, predictionSelectors} from "../../modules/prediction";
-import {appActions, appSelectors} from "../../modules/app";
+import {predictionActions} from "../../modules/prediction";
+import {appSelectors} from "../../modules/app";
+import {useBoundActions} from "../../components/hooks/useBoundActions";
 
 const Canvas: React.FC = () => {
     const { state } = useSelector(appSelectors);
-    const { answer, prediction } = useSelector(predictionSelectors);
-    const { initPrediction, startTimer, fetchPrediction, stopTimer, success, start } = useBoundActions();
+    const { initPrediction, fetchPrediction } = useBoundActions(predictionActions);
     const sendingData = useRef<number[][][]>([]);
     const data = useRef<number[][]>([]);
 
@@ -31,6 +29,7 @@ const Canvas: React.FC = () => {
             .curve(d3.curveBasis);
 
         const dragstarted = () => {
+            data.current = [];
             if (state !== AppStatus.DRAWING) {
                 return;
             }
@@ -65,7 +64,6 @@ const Canvas: React.FC = () => {
             sendingData.current.push(data.current);
             fetchPrediction(sendingData.current);
             activeLine = null;
-            data.current = [];
         };
 
         const svg = d3.select<SVGElement, unknown>('#canvas')
@@ -80,49 +78,23 @@ const Canvas: React.FC = () => {
                     .on('end', dragended)
             );
     });
-    useEffect(() => {
-        if (answer === prediction && state === AppStatus.DRAWING) {
-        stopTimer(null);
-        success(null);
-        }
 
-        if (state === AppStatus.RESETTING) {
+    useEffect(() => {
+        if (state === AppStatus.READY) {
             d3.selectAll('path.line').remove();
-            data.current = [];
             sendingData.current = [];
             initPrediction(null);
-            startTimer(null);
-            start(null);
         }
-    }, [state, prediction]);
+    }, [state]);
 
 return (
     <Container>
-            <svg id="canvas"/>
-        </Container>
+        <svg id="canvas"/>
+    </Container>
     );
 };
 
 export default Canvas;
-
-
-const useBoundActions = () => {
-    const dispatch = useDispatch();
-    return useMemo(() => {
-        return bindActionCreators(
-            {
-                startTimer: timerActions.restartTimer,
-                stopTimer: timerActions.stopTimer,
-                ready: appActions.ready,
-                start: appActions.start,
-                success: appActions.success,
-                fetchPrediction: predictionActions.fetchPrediction,
-                initPrediction: predictionActions.initPrediction,
-            },
-            dispatch
-        );
-    }, [dispatch]);
-};
 
 const Container = baseStyled(Grid)`
   flex: 1;

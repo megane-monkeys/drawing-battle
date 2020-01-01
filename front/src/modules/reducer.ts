@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
-import timerReducer from "./timer/slice";
-import predictionReducer from "./prediction/slice";
-import appReducer from "./app/slice";
+import timerReducer from "./timer";
+import predictionReducer from "./prediction";
+import appReducer from "./app";
 
 export interface RootState {
     app: ReturnType<typeof appReducer>;
