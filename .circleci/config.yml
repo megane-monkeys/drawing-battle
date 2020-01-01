@@ -4,7 +4,7 @@
 #
 version: 2
 jobs:
-  build:
+  build-deploy:
     docker:
       # specify the version you desire here
       - image: circleci/node:8.17
@@ -33,3 +33,20 @@ jobs:
 
       # run build!
       - run: cd ./front && yarn build
+
+      - run: 
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "develop" ]; then
+              git config user.name "Circle CI"
+              git config user.email "<>"
+              rm -f .gitignore
+              git add back/src/build
+              git commit -m "deploy by ci"
+              git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git `git subtree split --prefix back/src master`:master --force
+            fi
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build-deploy
