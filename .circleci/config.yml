@@ -33,16 +33,17 @@ jobs:
 
       # run build!
 
-      - run: cd ./front && yarn build
-      - run: |
-      if [ "${CIRCLE_BRANCH}" == "master" ]; then
-        git config user.name "Circle CI"
-        git config user.email "<>"
-        rm -f .gitignore
-        git add back/src/build
-        git commit -m "deploy by ci"
-        git subtree push --prefix back/src https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
-      fi
+      - run: 
+        command: |
+          cd ./front && yarn build
+          if [ "${CIRCLE_BRANCH}" == "develop" ]; then
+            git config user.name "Circle CI"
+            git config user.email "<>"
+            rm -f .gitignore
+            git add back/src/build
+            git commit -m "deploy by ci"
+            git subtree push --prefix back/src https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
+          fi
 
 workflows:
   version: 2
