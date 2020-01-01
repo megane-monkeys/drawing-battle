@@ -33,6 +33,8 @@ jobs:
 
       # run build!
       - run: cd ./front && yarn build
+      - run: git add back/src/build/
+      - run: git commit -m "deploy"
       - run: git subtree push --prefix back/src https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
 
 workflows:
