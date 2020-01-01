@@ -32,9 +32,10 @@ jobs:
           key: v1-dependencies-{{ checksum "./front/package.json" }}
 
       # run build!
+      - run: cd ./front && yarn build
+
       - run: 
           command: |
-            cd ./front && yarn build
             if [ "${CIRCLE_BRANCH}" == "develop" ]; then
               git config user.name "Circle CI"
               git config user.email "<>"
