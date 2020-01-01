@@ -1,30 +1,41 @@
-import React, {useEffect, useMemo} from 'react';
+import React, {useEffect} from 'react';
 import {predictionActions, predictionSelectors} from "../../modules/prediction"
-import { useSelector, useDispatch } from "react-redux";
+import {useSelector} from "react-redux";
 import styled from "styled-components";
 import {AppStatus} from "../../constants/appStatus";
 import Button from "../../components/Button/Button";
-import {bindActionCreators} from "redux";
-import {timerSelectors} from "../../modules/timer";
+import {timerActions, timerSelectors} from "../../modules/timer";
 import {Grid} from "@material-ui/core";
 import AnswerSelect from "../AnswerSelect/AnswerSelect";
 import {appActions, appSelectors} from "../../modules/app";
+import {useBoundActions} from "../../components/hooks/useBoundActions";
+import * as d3 from "d3";
 
 const Header: React.FC = () => {
     const { milliseconds } = useSelector(timerSelectors);
     const { state } = useSelector(appSelectors);
     const { answer, prediction, answers, random } = useSelector(predictionSelectors);
-    const { setAnswer, reset, abort, ready } = useBoundActions();
+    const { abort, ready, start, success } = useBoundActions(appActions);
+    const { setAnswer } = useBoundActions(predictionActions);
+    const { restartTimer, stopTimer } = useBoundActions(timerActions);
 
     useEffect(() => {
         document.title = "Drawing Race";
     });
 
-    const start = () => {
+    useEffect(() => {
+        if (answer === prediction) {
+            stopTimer(null);
+            success(null);
+        }
+    }, [prediction]);
+
+    const onStartClick = () => {
         if (random) {
             setAnswer(answers[Math.floor(Math.random() * answers.length)]);
         }
-        reset(null);
+        restartTimer(null);
+        start(null);
     };
     return (
         <Container className="Header">
@@ -32,7 +43,7 @@ const Header: React.FC = () => {
             <Wrapper>
                 {(state === AppStatus.READY) ? <AnswerSelect /> : <PredictionText>AI判定→ {prediction} {prediction === answer ? "!" : "?"}</PredictionText>}
             </Wrapper>
-            {(state === AppStatus.READY) && <Button onClick={start}>スタート</Button>}
+            {(state === AppStatus.READY) && <Button onClick={onStartClick}>スタート</Button>}
             {(state === AppStatus.DRAWING) && <Button onClick={() => abort(null)} color={"secondary"}>ギブアップ</Button>}
             {(state === AppStatus.SUCCESS || state === AppStatus.ABORT) && <Button onClick={() => ready(null)}>もう一回</Button>}
             {(state === AppStatus.SUCCESS) && <ResultText>記録: {(milliseconds/1000).toFixed(2)}秒</ResultText>}
@@ -42,20 +53,6 @@ const Header: React.FC = () => {
 
 export default Header;
 
-const useBoundActions = () => {
-    const dispatch = useDispatch();
-    return useMemo(() => {
-        return bindActionCreators(
-            {
-                reset: appActions.reset,
-                abort: appActions.abort,
-                ready: appActions.ready,
-                setAnswer: predictionActions.setAnswer,
-            },
-            dispatch
-        );
-    }, [dispatch]);
-};
 const Container = styled.div`
     text-align: center;
 `;

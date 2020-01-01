@@ -42,8 +42,8 @@ const fetchPredictionAjax = (strokes: number[][][]) => {
 
 };
 
-function* fetchPrediction() {
-    const { strokes } = yield select(predictionSelectors);
+function* fetchPrediction(action: ReturnType <typeof actions.fetchPrediction>) {
+    const strokes = action.payload;
     const { data, error } = yield call(fetchPredictionAjax, strokes);
     if (data) {
         yield put(actions.setPrediction(data.label));
