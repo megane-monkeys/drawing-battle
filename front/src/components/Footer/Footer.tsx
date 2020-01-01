@@ -4,7 +4,7 @@ import styled from "styled-components";
 const Footer: React.FC = () => {
     return (
         <div className="Footer">
-            <Credit>Drawing Race, 2019 megane-monkeys</Credit>
+            <Credit>Drawing Race, 2020 megane-monkeys</Credit>
         </div>
     );
 };
