@@ -2,17 +2,19 @@ import React, {useEffect, useMemo} from 'react';
 import {predictionActions, predictionSelectors} from "../../modules/prediction"
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
-import {TimerStatus} from "../../constants/timerStatus";
+import {AppStatus} from "../../constants/appStatus";
 import Button from "../../components/Button/Button";
 import {bindActionCreators} from "redux";
-import {timerActions, timerSelectors} from "../../modules/timer";
+import {timerSelectors} from "../../modules/timer";
 import {Grid} from "@material-ui/core";
 import AnswerSelect from "../AnswerSelect/AnswerSelect";
+import {appActions, appSelectors} from "../../modules/app";
 
 const Header: React.FC = () => {
-    const { state, milliseconds } = useSelector(timerSelectors);
+    const { milliseconds } = useSelector(timerSelectors);
+    const { state } = useSelector(appSelectors);
     const { answer, prediction, answers, random } = useSelector(predictionSelectors);
-    const { setAnswer, resetTimer, abortTimer } = useBoundActions();
+    const { setAnswer, reset, abort, ready } = useBoundActions();
 
     useEffect(() => {
         document.title = "Drawing Race";
@@ -22,19 +24,18 @@ const Header: React.FC = () => {
         if (random) {
             setAnswer(answers[Math.floor(Math.random() * answers.length)]);
         }
-        resetTimer(null);
+        reset(null);
     };
     return (
         <Container className="Header">
-            <AnswerText>お題 「{random && (state !== TimerStatus.WORKING) ? "???" : answer}」</AnswerText>
+            <AnswerText>お題 「{random && (state === AppStatus.READY) ? "???" : answer}」</AnswerText>
             <Wrapper>
-                {(state === TimerStatus.WORKING) && <PredictionText>AI判定→ {prediction} ?</PredictionText>}
-                {(state !== TimerStatus.WORKING) && <AnswerSelect />}
+                {(state === AppStatus.READY) ? <AnswerSelect /> : <PredictionText>AI判定→ {prediction} {prediction === answer ? "!" : "?"}</PredictionText>}
             </Wrapper>
-            {(state === TimerStatus.INITIAL) && <Button onClick={start}>スタート</Button>}
-            {(state === TimerStatus.WORKING) && <Button onClick={() => abortTimer(null)} color={"secondary"}>ギブアップ</Button>}
-            {(state === TimerStatus.FINISH || state === TimerStatus.ABORT) && <Button onClick={start}>もう一回</Button>}
-            {(state === TimerStatus.FINISH) && <ResultText>記録: {(milliseconds/1000).toFixed(2)}秒</ResultText>}
+            {(state === AppStatus.READY) && <Button onClick={start}>スタート</Button>}
+            {(state === AppStatus.DRAWING) && <Button onClick={() => abort(null)} color={"secondary"}>ギブアップ</Button>}
+            {(state === AppStatus.SUCCESS || state === AppStatus.ABORT) && <Button onClick={() => ready(null)}>もう一回</Button>}
+            {(state === AppStatus.SUCCESS) && <ResultText>記録: {(milliseconds/1000).toFixed(2)}秒</ResultText>}
         </Container>
     );
 };
@@ -46,8 +47,9 @@ const useBoundActions = () => {
     return useMemo(() => {
         return bindActionCreators(
             {
-                resetTimer: timerActions.resetTimer,
-                abortTimer: timerActions.abortTimer,
+                reset: appActions.reset,
+                abort: appActions.abort,
+                ready: appActions.ready,
                 setAnswer: predictionActions.setAnswer,
             },
             dispatch
