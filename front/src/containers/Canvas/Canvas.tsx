@@ -85,7 +85,7 @@ const Canvas: React.FC = () => {
             sendingData.current = [];
             initPrediction(null);
         }
-    }, [state]);
+    }, [state, initPrediction]);
 
 return (
     <Container>

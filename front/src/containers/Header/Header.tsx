@@ -9,7 +9,6 @@ import {Grid} from "@material-ui/core";
 import AnswerSelect from "../AnswerSelect/AnswerSelect";
 import {appActions, appSelectors} from "../../modules/app";
 import {useBoundActions} from "../../components/hooks/useBoundActions";
-import * as d3 from "d3";
 
 const Header: React.FC = () => {
     const { milliseconds } = useSelector(timerSelectors);
@@ -21,14 +20,14 @@ const Header: React.FC = () => {
 
     useEffect(() => {
         document.title = "Drawing Race";
-    });
+    }, []);
 
     useEffect(() => {
         if (answer === prediction) {
             stopTimer(null);
             success(null);
         }
-    }, [prediction]);
+    }, [prediction, stopTimer, success, answer]);
 
     const onStartClick = () => {
         if (random) {

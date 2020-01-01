@@ -9,5 +9,5 @@ export const useBoundActions = (actions: any) => {
             actions,
             dispatch
         );
-    }, [dispatch]);
+    }, [dispatch, actions]);
 };
