@@ -24,7 +24,9 @@ jobs:
             - v1-dependencies-{{ checksum "./front/package.json" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-      - run: ls
+      - run: pwd
+      - run: cd ./front
+      - run: pwd
       - run: cd ./front && yarn install
 
       - save_cache:
